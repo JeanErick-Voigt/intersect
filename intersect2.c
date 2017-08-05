@@ -17,7 +17,6 @@ int main(int argc, char **argv)
 {
 	printf("Top of program\n");
 	FILE* fp;
-	char buffer[WORDLIMIT];
 	//int wordValue;
 	int count = 0;
 	char c;
@@ -67,20 +66,22 @@ NODE *iterateWords(NODE *n, char** fileNum)
 	{
 		printf("Statement before buffer inc  %d\n", count++);
 		buffer[index++] = c;
-		if(c == ' ' || c == '\t' || c == '\n'){
+		if(isspace(c)){
+		//if(c == ' ' || c == '\t' || c == '\n'){
 			buffer[index - 1] = '\0';
 		printf("This is after c = delimeter %s\n", buffer);
 			if (n == NULL){
 				n = CreateNode(buffer, temp);
-
+				printf("This is NULL branch %s\n", n->data);
 			}else{
-				if(n->wCount == 1){
-					compareAndAdd(n, buffer);
-				}
+				printf("this is else statement %s\n", n->data);
+				compareAndAdd(n, buffer);
 			}
+			buffer[0] ='\0';
+			index = 0;
 		}
-		index = 0;
-		buffer[0] = '\0';
+		printf("This is index  %d\n", index);
+		//buffer[0] = '\0';
 	}
 	fclose(fp);
 	return(n);
@@ -115,9 +116,7 @@ void compareAndAdd(NODE *n, char * word)
 				break;
 			}
 			n = n -> right;
-		}
-		else if( wordValue > 0)
-		{
+		}else{
 			if (n -> left == NULL){
 				n -> left = CreateNode(word, temp);
 				n -> left -> parent = n;
@@ -125,6 +124,7 @@ void compareAndAdd(NODE *n, char * word)
 			}
 			n = n -> left;
 		}
+		n->wCount = 1;
 	}
 }
 
