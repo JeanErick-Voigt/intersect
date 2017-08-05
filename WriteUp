@@ -1,0 +1,34 @@
+Name: Jean-Erick Voigt
+Date: 5 August 2017
+Current Module: DSA_II
+Project Name: Intersect
+
+Project Goals:
+	Project was designed to evaluate our ability to use data structures and abstract data types that we went over in class.  We had accept an unknown amount of files by command line arguments and scan through each file for words.  Once we found a word that was present in all files we had to store that word in a data structure.  Then print out all the words in sorted order.
+Considerations:
+	<A bulleted list of considerations and conditions which affected the design of your project>
+File input 
+The design of the binary search tree
+Inability to use arrays
+The requirement that we have to be able to read from an unknown amount of files.  
+
+Initial Design:
+	This program was split into two modules.  The header module contained the structure for the Binary search Tree and the prototypes for my functions.  The main module contained the driver and the code for the functions.  
+
+Data Flow:
+	Initially, I verify that argc is greater than two in order to ensure that there enough files to compare.  Next, I verify that none of the files are null.  If they are NULL then there will be an exit statement and indicating that the file can’t be opened.  Then the program goes into its iterate function where it opens a file and iterates through to add those words in the binary search tree. Before doing this, memory must be malloced for each node and each node->data.  Once the first word is added to the tree then the next word will be compared to it using strcasecmp in order to determine if it is bigger or smaller.  If the word is bigger than it will go to node->right and if it smaller it will go to node->left of the node it was compared to.  Next, the pointer is incremented to node->left or node->right.  
+After all the words are collected from the first file I was supposed to go to consecutive files looking for matches.  Once I found a match I would increment the counter on the node that it matched with and if it didn’t match it would be discarded.  At the time of printing the words would print only if the count for the node matched the count for argc meaning that the word had a match for each file.  
+
+Communication Protocol:
+	<Discuss any custom communication protocol you have used including the various request and responses that may be sent and received.>
+
+Potential Pitfalls:
+	<Discuss any potential issues that you might run into while creating the project>
+
+Test Plan:
+	User Test:
+ 		No test were conducted due to the fact that I was still working on the code.  However, the professor provided test cases to model off of.  Additional test cases might have included files with all delimiters present to see how those delimiters, files that were too big that could only be read a chunk at a time and if the file started with a delimiter.  
+	Test Cases:
+
+Conclusion:
+	The project gave me a lot of trouble with inputting the data in the tree.  Once, I realized that I reset the buffer and other values in the wrong spot some things seemed to work better however the segfault was still occurring.  I think to improve the project I could put a print statement after each line to examine which lines were printing effectively. While doing that during the project time I saw that the words were printing but just not being saved to the node values.  
