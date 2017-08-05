@@ -7,18 +7,16 @@
 #define WORDLIMIT 257
 
 
-NODE * CreateNode(char * word, NODE* n);
-NODE * CreateNonEmptyNode(NODE *n, char * word);
-NODE * iterateWords(NODE *n, char** fileNum);
-void compareAndAdd(NODE *n, char * word);
-void printTree(NODE *n);
+//NODE * CreateNode(char * word, NODE* n);
+//NODE * iterateWords(NODE *n, char** fileNum);
+//void compareAndAdd(NODE *n, char * word);
+//void printTree(NODE *n);
 
 
 int main(int argc, char **argv)
 {
-	printf("Top of program");
+	printf("Top of program\n");
 	FILE* fp;
-	FILE* fp1;
 	char buffer[WORDLIMIT];
 	//int wordValue;
 	int count = 0;
@@ -30,17 +28,16 @@ int main(int argc, char **argv)
 	//}
 
 	int index = 0;
-	for(int i = 1; i < argc; i++ ){
-		fp = fopen(argv[i], "r");	
-		if(fp){
-			fclose(fp);
-			fp = NULL;
-		}else{
-			printf("could not open file");
-			printf("%s\n", argv[i]);
-		}
+//	for(int i = 1; i < argc; i++ ){
+//		fp = fopen(argv[i], "r");	
+//		if(fp){
+//			fclose(fp);
+//		}else{
+//			printf("could not open file");
+//			printf("%s\n", argv[i]);
+//		}
 	//	*argv++;
-	}
+//	}
 	// iterate through words
 	NODE *wordNodes = NULL;
 //	printf("%s" , argv[2]);
@@ -49,35 +46,32 @@ int main(int argc, char **argv)
 //		printf("Good");
 //		printf("%ld", ftell(fp));
 //	}
-	printf("top of loop");
+	printf("top of loop\n");
 	iterateWords(wordNodes, argv);
-	printf("%s", wordNodes->parent->data);
+	printf("%s\n", wordNodes->parent->data);
 	printTree(wordNodes);
 	return(0);
 }
 
 NODE *iterateWords(NODE *n, char** fileNum)
 {
+	int count = 0;
 	NODE* temp = NULL;
 	FILE *fp;
-	fp = fopen(fileNum[1], "r");
+	fp = fopen(*(fileNum + 1), "r");
 	char c, buffer[WORDLIMIT];
 	int index, root;
 	index = root = 0;
+	printf("before fgetc %s\n", *(fileNum + 1));
 	while((c = fgetc(fp)) != EOF)
 	{
+		printf("Statement before buffer inc  %d\n", count++);
 		buffer[index++] = c;
 		if(c == ' ' || c == '\t' || c == '\n'){
 			buffer[index - 1] = '\0';
+		printf("This is after c = delimeter %s\n", buffer);
 			if (n == NULL){
-				if (root == 0){
-					n = CreateNode(buffer, temp);
-					n->root = n;
-					root = 1;
-				}else{
-					n = CreateNode(buffer, temp);
-
-				}
+				n = CreateNode(buffer, temp);
 
 			}else{
 				if(n->wCount == 1){
@@ -86,7 +80,9 @@ NODE *iterateWords(NODE *n, char** fileNum)
 			}
 		}
 		index = 0;
+		buffer[0] = '\0';
 	}
+	fclose(fp);
 	return(n);
 
 }
@@ -96,8 +92,9 @@ void printTree(NODE* n)
 	if (n == NULL)
 		return;
 	printTree(n->left);
-	printf("%s", n->data);
-	printTree(n->right); 
+	printf("%s\n", n->data);
+	printTree(n->right);
+	printTree(n->parent); 
 }
 
 void compareAndAdd(NODE *n, char * word)
@@ -129,13 +126,6 @@ void compareAndAdd(NODE *n, char * word)
 			n = n -> left;
 		}
 	}
-}
-NODE* CreateNonEmptyNode(NODE* n, char* word)
-{
-
-	n = malloc(sizeof(NODE));
-	n -> data = malloc(sizeof(char*) * strlen(word) + 1);
-	return n;
 }
 
 NODE* CreateNode(char *word, NODE* n)
