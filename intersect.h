@@ -10,3 +10,8 @@ struct node {
 };
 typedef struct node NODE;
 
+NODE * CreateNode(char* word, NODE *n);
+//NODE * CreateNonEmptyNOde(NODE *n, char* word);
+NODE * iterateWords(NODE * n, char ** filenum);
+void compareAndAdd(NODE *n, char * word);
+void printTree(NODE *n);
