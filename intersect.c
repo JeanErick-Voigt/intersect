@@ -17,34 +17,26 @@ int main(int argc, char **argv)
 {
 	printf("Top of program\n");
 	FILE* fp;
-	//int wordValue;
 	int count = 0;
 	char c;
 	int root = 0;
-	//if (argc < 2){
-	//	printf("Did not provide enough arguments to compare\n");
-	//	exit(1);
-	//}
+	if (argc < 2){
+		printf("Did not provide enough arguments to compare\n");
+		exit(1);
+	}
 
 	int index = 0;
-//	for(int i = 1; i < argc; i++ ){
-//		fp = fopen(argv[i], "r");	
-//		if(fp){
-//			fclose(fp);
-//		}else{
-//			printf("could not open file");
-//			printf("%s\n", argv[i]);
-//		}
-	//	*argv++;
-//	}
+	for(int i = 1; i < argc; i++ ){
+		fp = fopen(argv[i], "r");	
+		if(fp){
+			fclose(fp);
+		}else{
+			printf("could not open file");
+			printf("%s\n", argv[i]);
+		}
+	}
 	// iterate through words
 	NODE *wordNodes = NULL;
-//	printf("%s" , argv[2]);
-//	fp = fopen(argv[0], "r");
-//	if(fp){
-//		printf("Good");
-//		printf("%ld", ftell(fp));
-//	}
 	printf("top of loop\n");
 	iterateWords(wordNodes, argv);
 	printf("%s\n", wordNodes->parent->data);
@@ -54,6 +46,7 @@ int main(int argc, char **argv)
 
 NODE *iterateWords(NODE *n, char** fileNum)
 {
+	int wordValue;
 	int count = 0;
 	NODE* temp = NULL;
 	FILE *fp;
@@ -67,7 +60,6 @@ NODE *iterateWords(NODE *n, char** fileNum)
 		printf("Statement before buffer inc  %d\n", count++);
 		buffer[index++] = c;
 		if(isspace(c)){
-		//if(c == ' ' || c == '\t' || c == '\n'){
 			buffer[index - 1] = '\0';
 		printf("This is after c = delimeter %s\n", buffer);
 			if (n == NULL){
@@ -75,13 +67,29 @@ NODE *iterateWords(NODE *n, char** fileNum)
 				printf("This is NULL branch %s\n", n->data);
 			}else{
 				printf("this is else statement %s\n", n->data);
-				compareAndAdd(n, buffer);
+				wordValue = strcasecmp(n->data, buffer);
+				if(wordValue > 0){
+					if(n->right == NULL){
+						n->right = CreateNode(buffer, n);
+						n->right->parent = n;
+					}
+					n = n->right;
+				}
+				else if(wordValue < 0){
+					if(n->left == NULL){
+						n->left = CreateNode(buffer, n);
+						n->left->parent = n;
+					}
+					n = n->left;
+				}else{
+					break;
+				}
+
 			}
 			buffer[0] ='\0';
 			index = 0;
 		}
 		printf("This is index  %d\n", index);
-		//buffer[0] = '\0';
 	}
 	fclose(fp);
 	return(n);
@@ -117,6 +125,7 @@ void compareAndAdd(NODE *n, char * word)
 			}
 			n = n -> right;
 		}else{
+		
 			if (n -> left == NULL){
 				n -> left = CreateNode(word, temp);
 				n -> left -> parent = n;
