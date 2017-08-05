@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,10 +7,11 @@
 #define WORDLIMIT 257
 
 
-NODE * CreateNode(NODE *n, char * word);
+NODE * CreateNode(char * word, NODE* n);
 NODE * CreateNonEmptyNode(NODE *n, char * word);
-
-
+NODE * iterateWords(NODE *n, char** fileNum);
+void compareAndAdd(NODE *n, char * word);
+void printTree(NODE *n);
 
 
 int main(int argc, char **argv)
@@ -18,7 +20,7 @@ int main(int argc, char **argv)
 	FILE* fp;
 	FILE* fp1;
 	char buffer[WORDLIMIT];
-	int wordValue;
+	//int wordValue;
 	int count = 0;
 	char c;
 	int root = 0;
@@ -28,141 +30,124 @@ int main(int argc, char **argv)
 	//}
 
 	int index = 0;
-//	for(int i = 1; i < argc; i++ ){
-//		fp = fopen(argv[i], "r");	
-//		if(fp){
-//			rewind(fp);
-//			fclose(fp);
-//			fp = NULL;
-//		}else{
-//			printf("could not open file");
-//			printf("%s\n", argv[i]);
-//		}
-
-//	}
+	for(int i = 1; i < argc; i++ ){
+		fp = fopen(argv[i], "r");	
+		if(fp){
+			fclose(fp);
+			fp = NULL;
+		}else{
+			printf("could not open file");
+			printf("%s\n", argv[i]);
+		}
+	//	*argv++;
+	}
 	// iterate through words
 	NODE *wordNodes = NULL;
-	NODE *temp = NULL;
-	printf("%s" , argv[2]);
-	fp1 = fopen(argv[1], "r");
+//	printf("%s" , argv[2]);
+//	fp = fopen(argv[0], "r");
 //	if(fp){
 //		printf("Good");
 //		printf("%ld", ftell(fp));
 //	}
 	printf("top of loop");
-	while((c = fgetc(fp1)) != EOF){
-		buffer[index++] = c;
-		if(c == ' ' || c == '\t' || c =='\n'){
-			buffer[index] = '\0'; // to compare against tree
-			
-
-			// if no nodes initialize first node and set space equal to the buffer word
-			if(root == 0){
-				wordNodes = CreateNode(wordNodes, buffer);
-				wordNodes -> root -> data = wordNodes -> data = buffer;
-				root = 1;
-				printf("%s\n", wordNodes -> root -> data);
-				buffer[0] = '\0';
-				index = 0;
-				continue;
-			}
-			//There is already a root
-			while(1){
-				wordValue = strcasecmp(wordNodes->data, buffer);
-				wordNodes = CreateNonEmptyNode(wordNodes, buffer);
-				if(wordValue > 0){
-					//wordNodes = CreateNonEmptyNOde(wordNode, buffer);
-					if(wordNodes -> right == NULL){
-						wordNodes = wordNodes->right;
-						wordNodes = CreateNonEmptyNode(wordNodes, buffer);
-						wordNodes -> parent -> data = wordNodes -> data;
-						wordNodes->data  = buffer;
-						break;
-					}else{
-						wordNodes = wordNodes->right;
-					}
-				}
-				else if(wordValue < 0){
-					if(wordNodes -> left == NULL){
-						wordNodes = wordNodes -> left;
-						wordNodes = CreateNonEmptyNode(wordNodes, buffer);
-						wordNodes -> parent -> data = wordNodes -> data;
-						wordNodes -> left -> data = buffer;
-						break;
-					}else{
-						wordNodes = wordNodes -> left;
-					}
-				}else{
-					break;
-				}
-			} 
-
-		}
-		buffer[0] = '\0';
-		index = 0;
-	}
+	iterateWords(wordNodes, argv);
+	printf("%s", wordNodes->parent->data);
+	printTree(wordNodes);
 	return(0);
 }
 
+NODE *iterateWords(NODE *n, char** fileNum)
+{
+	NODE* temp = NULL;
+	FILE *fp;
+	fp = fopen(fileNum[1], "r");
+	char c, buffer[WORDLIMIT];
+	int index, root;
+	index = root = 0;
+	while((c = fgetc(fp)) != EOF)
+	{
+		buffer[index++] = c;
+		if(c == ' ' || c == '\t' || c == '\n'){
+			buffer[index - 1] = '\0';
+			if (n == NULL){
+				if (root == 0){
+					n = CreateNode(buffer, temp);
+					n->root = n;
+					root = 1;
+				}else{
+					n = CreateNode(buffer, temp);
 
-			
-
-
-				/*if(count == 0){ // root set
-				wordNodes = CreateNode(WordNodes, buffer);
-				count = 1;
-				continue;
-
-			}
-			
-			if (NODE wordNodes == NULL){   //add node and if first go around root node
-				strccasecmp(CreateNonEmptyNode(wordNodes, buffer), ;
-				count = 1
-			}     
-
-			wordValue = strcasecmp(wordNodes -> data, buffer)
-			if (wordValue == 0){
-				break;
-			}
-
-			else if(wordValue == -1 & ){ 
-
-				
-			}
-			else if (count == 0){ //root node
-				if (wordValue == - 1){
-					wordNodes = WordNodes -> word;
 				}
 
-				el{
-		fp = fopen(argv[i], "r");
+			}else{
+				if(n->wCount == 1){
+					compareAndAdd(n, buffer);
+				}
+			}
+		}
+		index = 0;
+	}
+	return(n);
 
+}
 
+void printTree(NODE* n)
+{
+	if (n == NULL)
+		return;
+	printTree(n->left);
+	printf("%s", n->data);
+	printTree(n->right); 
+}
+
+void compareAndAdd(NODE *n, char * word)
+{
+	NODE* temp;
+	int wordValue;
+	while(1)
+	{
+		wordValue = strcasecmp(n->data, word);
+		if (wordValue == 0){ //words match and break
+			break;
+		}
+		else if(wordValue < 0)
+		{
+			if (n->right == NULL){
+				n -> right = CreateNode(word, temp);
+				n -> right -> parent = n;
+				break;
+			}
+			n = n -> right;
+		}
+		else if( wordValue > 0)
+		{
+			if (n -> left == NULL){
+				n -> left = CreateNode(word, temp);
+				n -> left -> parent = n;
+				break;
+			}
+			n = n -> left;
 		}
 	}
 }
-*/
-
-//no root
-NODE* CreateNode(NODE* n, char *word) 
+NODE* CreateNonEmptyNode(NODE* n, char* word)
 {
 
 	n = malloc(sizeof(NODE));
-	//NODE *n->data = malloc(sizeof(char*) * (strlen(word) + 1));
-	//strcpy(n->data, word);
-	//n->root = n->data;
-	n -> parent = NULL;
-	n -> left = NULL;
-	n -> right = NULL;
-	n -> wCount = 1;
-	n -> root = NULL;
+	n -> data = malloc(sizeof(char*) * strlen(word) + 1);
 	return n;
 }
 
-NODE* CreateNonEmptyNode(NODE* n, char * word)
+NODE* CreateNode(char *word, NODE* n)
 {
 	n = malloc(sizeof(NODE));
-	n->data = malloc(sizeof(char*) * strlen(word) + 1);
+	n->data = malloc(sizeof(char*) * (strlen(word) + 1));
+	strcpy(n->data, word);
+	n->parent = NULL;
+	n->left = NULL;
+	n->right = NULL;
+	n->wCount = 1;
+	n->root = NULL;
 	return n;
 }
 
